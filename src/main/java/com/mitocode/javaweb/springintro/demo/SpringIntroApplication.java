@@ -8,16 +8,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 
 import com.mitocode.javaweb.springintro.agile.Developer;
 import com.mitocode.javaweb.springintro.agile.TeamMember;
+import com.mitocode.javaweb.springintro.agile.TechnicalLeader;
+import com.mitocode.javaweb.springintro.agile.report.TeamReport;
+import com.mitocode.javaweb.springintro.agile.report.TechnicalLeaderReport;
 
 @SpringBootApplication
 @ComponentScan("com.mitocode.javaweb.springintro.agile")
-@PropertySource("classpath:demo.properties")
+@PropertySources({
+		@PropertySource("classpath:demo.properties"),
+		@PropertySource(value = "${spring.config.location}", ignoreResourceNotFound = true)
+})
 public class SpringIntroApplication implements CommandLineRunner {
 	
 	private static final Logger log = LoggerFactory.getLogger(SpringIntroApplication.class);
@@ -40,6 +48,13 @@ public class SpringIntroApplication implements CommandLineRunner {
 	@Autowired
 	@Lazy
 	private TeamMember productOwner;
+
+//	@Autowired
+//	@Qualifier("technicalLeader")
+	private TeamMember technicalLeader;
+	
+//	@Autowired
+	private TeamReport technicalLeaderReport;
 	
 	@Value("${nombre-equipo}")
 	private String teamName;
@@ -84,9 +99,21 @@ public class SpringIntroApplication implements CommandLineRunner {
 		log.info(productOwner.doAction());
 		log.info(productOwner.doReport());
 		
+//		log.info(technicalLeader.doAction());
+//		log.info(technicalLeader.doReport());
+		
 		log.info("Nombre del equipo: " + teamName);
 		
 	}
 	
+	@Bean(name = "technicalLeader")
+	public TechnicalLeader technicalLeader() {
+		return new TechnicalLeader(technicalLeaderReport);
+	}
+	
+	@Bean
+	public TechnicalLeaderReport technicalLeaderReport() {
+		return new TechnicalLeaderReport();
+	}
 
 }
