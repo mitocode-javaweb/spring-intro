@@ -17,7 +17,6 @@ import org.springframework.context.annotation.PropertySources;
 import com.mitocode.javaweb.springintro.agile.Developer;
 import com.mitocode.javaweb.springintro.agile.TeamMember;
 import com.mitocode.javaweb.springintro.agile.TechnicalLeader;
-import com.mitocode.javaweb.springintro.agile.report.TeamReport;
 import com.mitocode.javaweb.springintro.agile.report.TechnicalLeaderReport;
 
 @SpringBootApplication
@@ -49,12 +48,9 @@ public class SpringIntroApplication implements CommandLineRunner {
 	@Lazy
 	private TeamMember productOwner;
 
-//	@Autowired
-//	@Qualifier("technicalLeader")
+	@Autowired
+	@Qualifier("technicalLeader")
 	private TeamMember technicalLeader;
-	
-//	@Autowired
-	private TeamReport technicalLeaderReport;
 	
 	@Value("${nombre-equipo}")
 	private String teamName;
@@ -99,20 +95,21 @@ public class SpringIntroApplication implements CommandLineRunner {
 		log.info(productOwner.doAction());
 		log.info(productOwner.doReport());
 		
-//		log.info(technicalLeader.doAction());
-//		log.info(technicalLeader.doReport());
+		log.info(technicalLeader.doAction());
+		log.info(technicalLeader.doReport());
 		
 		log.info("Nombre del equipo: " + teamName);
 		
 	}
 	
-	@Bean(name = "technicalLeader")
-	public TechnicalLeader technicalLeader() {
+	@Bean("technicalLeader")
+	@Autowired
+	public TechnicalLeader createTechnicalLeader(TechnicalLeaderReport technicalLeaderReport) {
 		return new TechnicalLeader(technicalLeaderReport);
 	}
 	
-	@Bean
-	public TechnicalLeaderReport technicalLeaderReport() {
+	@Bean("technicalLeaderReport")
+	public TechnicalLeaderReport createTechnicalLeaderReport() {
 		return new TechnicalLeaderReport();
 	}
 
